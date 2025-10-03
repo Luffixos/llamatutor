@@ -1,17 +1,18 @@
-import type { Metadata } from "next";
-import { Montserrat } from "next/font/google";
-import PlausibleProvider from "next-plausible";
-import "./globals.css";
-import Image from "next/image";
-import bgImage from "../public/new-bg.png";
+import type React from "react"
+import type { Metadata } from "next"
+import { Inter } from "next/font/google"
+import PlausibleProvider from "next-plausible"
+import "./globals.css"
+import Image from "next/image"
+import bgImage from "../public/new-bg.png"
 
-const montserrat = Montserrat({ subsets: ["latin"] });
+const inter = Inter({ subsets: ["latin"] })
 
-let title = "Llama Tutor – AI Personal Tutor";
-let description = "Learn faster with our open source AI personal tutor";
-let url = "https://llamatutor.com/";
-let ogimage = "https://llamatutor.together.ai/og-image.png";
-let sitename = "llamatutor.com";
+const title = "Llama Tutor – AI Personal Tutor"
+const description = "Learn faster with our open source AI personal tutor"
+const url = "https://llamatutor.com/"
+const ogimage = "https://llamatutor.together.ai/og-image.png"
+const sitename = "llamatutor.com"
 
 export const metadata: Metadata = {
   metadataBase: new URL(url),
@@ -35,12 +36,13 @@ export const metadata: Metadata = {
     title,
     description,
   },
-};
+    generator: 'v0.app'
+}
 
 export default function RootLayout({
   children,
 }: Readonly<{
-  children: React.ReactNode;
+  children: React.ReactNode
 }>) {
   return (
     <html lang="en" className="h-full">
@@ -48,16 +50,14 @@ export default function RootLayout({
         <PlausibleProvider domain="llamatutor.together.ai" />
       </head>
 
-      <body
-        className={`${montserrat.className} flex h-full flex-col justify-between text-gray-700 antialiased`}
-      >
+      <body className={`${inter.className} flex h-full flex-col justify-between text-gray-700 antialiased`}>
         <Image
-          src={bgImage}
+          src={bgImage || "/placeholder.svg"}
           alt=""
           className="absolute inset-0 -z-10 max-h-full max-w-full blur-[2px]"
         />
         {children}
       </body>
     </html>
-  );
+  )
 }

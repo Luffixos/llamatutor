@@ -1,18 +1,21 @@
-import Image from "next/image";
-import { FC } from "react";
-import desktopImg from "../public/desktop-screenshot.png";
-import mobileImg from "../public/screenshot-mobile.png";
-import InitialInputArea from "./InitialInputArea";
-import { suggestions } from "@/utils/utils";
+"use client"
+
+import type React from "react"
+
+import Image from "next/image"
+import type { FC } from "react"
+import mobileImg from "../public/screenshot-mobile.png"
+import InitialInputArea from "./InitialInputArea"
+import { suggestions } from "@/utils/utils"
 
 type THeroProps = {
-  promptValue: string;
-  setPromptValue: React.Dispatch<React.SetStateAction<string>>;
-  handleChat: (messages?: { role: string; content: string }[]) => void;
-  ageGroup: string;
-  setAgeGroup: React.Dispatch<React.SetStateAction<string>>;
-  handleInitialChat: () => void;
-};
+  promptValue: string
+  setPromptValue: React.Dispatch<React.SetStateAction<string>>
+  handleChat: (messages?: { role: string; content: string }[]) => void
+  ageGroup: string
+  setAgeGroup: React.Dispatch<React.SetStateAction<string>>
+  handleInitialChat: () => void
+}
 
 const Hero: FC<THeroProps> = ({
   promptValue,
@@ -23,41 +26,33 @@ const Hero: FC<THeroProps> = ({
   handleInitialChat,
 }) => {
   const handleClickSuggestion = (value: string) => {
-    setPromptValue(value);
-  };
+    setPromptValue(value)
+  }
 
   return (
     <>
-      <div className="mx-auto mt-10 flex max-w-3xl flex-col items-center justify-center sm:mt-36">
+      <div className="mx-auto mt-10 flex max-w-3xl flex-col items-center justify-center sm:mt-24">
         <a
-          className="mb-4 inline-flex h-7 shrink-0 items-center gap-[9px] rounded-[50px] border-[0.5px] border-solid border-[#E6E6E6] bg-[rgba(234,238,255,0.65)] bg-white px-5 py-4 shadow-[0px_1px_1px_0px_rgba(0,0,0,0.25)]"
+          className="mb-6 inline-flex shrink-0 items-center gap-2 rounded-full border border-gray-200 bg-gray-50 py-1.5 h-9 px-3"
           href="https://togetherai.link/"
           target="_blank"
+          rel="noreferrer"
         >
-          <Image
-            unoptimized
-            src="/togethercomputer.png"
-            alt="hero"
-            width={20}
-            height={20}
-          />
-          <span className="text-center text-sm font-medium italic">
-            Powered by <b>Llama 3.1</b> and <b>Together AI</b>
+          <Image unoptimized src="/togethercomputer.png" alt="hero" width={18} height={18} />
+          <span className="text-center tracking-tight text-sm font-light">
+            Powered by <b className="font-medium text-gray-800">Llama 3.1</b> and{" "}
+            <b className="text-sm font-medium text-gray-800">Together AI</b>
           </span>
         </a>
-        <h2 className="mt-2 bg-custom-gradient bg-clip-text text-center text-4xl font-medium tracking-tight text-gray-900 sm:text-6xl">
+        <h2 className="mt-2 text-center text-5xl tracking-tight text-gray-900 leading-10 sm:text-5xl font-medium">
           Your Personal{" "}
-          <span className="bg-gradient-to-r from-blue-600 to-blue-500 bg-clip-text font-bold text-transparent">
-            Tutor
-          </span>
+          <span className="bg-gradient-to-r from-gray-900 to-gray-800 bg-clip-text text-transparent">Tutor</span>
         </h2>
-        <p className="mt-4 text-balance text-center text-sm sm:text-base">
-          Enter a topic you want to learn about along with the education level
-          you want to be taught at and generate a personalized tutor tailored to
-          you!
+        <p className="mt-6 max-w-xl text-balance text-center text-gray-600 tracking-tight text-base leading-7">
+          Enter a topic and the education level you want to be taught at, and generate a free personalized tutor!
         </p>
 
-        <div className="mt-4 w-full pb-6">
+        <div className="mt-8 w-full pb-6">
           <InitialInputArea
             promptValue={promptValue}
             handleInitialChat={handleInitialChat}
@@ -68,53 +63,42 @@ const Hero: FC<THeroProps> = ({
           />
         </div>
 
-        <div className="flex flex-wrap items-center justify-center gap-2.5 pb-[30px] lg:flex-nowrap lg:justify-normal">
+        <div className="flex flex-wrap items-center justify-center gap-3 lg:flex-nowrap lg:justify-normal pb-8">
           {suggestions.map((item) => (
             <div
-              className="flex h-[35px] cursor-pointer items-center justify-center gap-[5px] rounded border border-solid border-[#C1C1C1] px-2.5 py-2 transition hover:bg-gray-200"
+              className="flex h-10 cursor-pointer items-center justify-center gap-2 border border-gray-200 px-4 py-2 transition hover:border-gray-900 hover:bg-gray-100 rounded-full bg-gray-50"
               onClick={() => handleClickSuggestion(item?.name)}
               key={item.id}
             >
               <Image
-                src={item.icon}
+                src={item.icon || "/placeholder.svg"}
                 alt={item.name}
                 width={18}
                 height={16}
                 className="w-[18px]"
               />
-              <span className="text-sm font-light leading-[normal] text-[#1B1B16]">
-                {item.name}
-              </span>
+              <span className="text-sm text-gray-700 font-normal">{item.name}</span>
             </div>
           ))}
         </div>
-        <p className="text-center text-sm font-light leading-[normal] text-[#1B1B16]">
+        <p className="text-center text-sm text-gray-600">
           Fully open source!{" "}
-          <span className="text-sm font-medium underline">
-            <a
-              href="https://github.com/Nutlope/llamatutor"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Star it on github.
+          <span className="font-medium underline">
+            <a className="text-gray-900" href="https://github.com/Nutlope/llamatutor" target="_blank" rel="noopener noreferrer">
+              Star it on GitHub
             </a>
           </span>
         </p>
       </div>
-      <div className="mx-auto max-w-7xl">
+      <div className="mx-auto mt-16 max-w-7xl px-6">
         <Image
-          src={desktopImg}
+          src={mobileImg || "/placeholder.svg"}
           alt="hero"
-          className="my-32 max-w-full max-lg:hidden"
-        />
-        <Image
-          src={mobileImg}
-          alt="hero"
-          className="my-5 max-w-full lg:hidden"
+          className="w-full rounded-xl border border-gray-200 lg:hidden"
         />
       </div>
     </>
-  );
-};
+  )
+}
 
-export default Hero;
+export default Hero

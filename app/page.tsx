@@ -1,145 +1,135 @@
-"use client";
-
-import Footer from "@/components/Footer";
-import Header from "@/components/Header";
-import Hero from "@/components/Hero";
-import Sources from "@/components/Sources";
-import { useState } from "react";
-import {
-  createParser,
-  ParsedEvent,
-  ReconnectInterval,
-} from "eventsource-parser";
-import { getSystemPrompt } from "@/utils/utils";
-import Chat from "@/components/Chat";
+"use client"
+import Header from "@/components/Header"
+import Hero from "@/components/Hero"
+import Sources from "@/components/Sources"
+import Footer from "@/components/Footer"
+import { useState } from "react"
+import { createParser, type ParsedEvent, type ReconnectInterval } from "eventsource-parser"
+import { getSystemPrompt } from "@/utils/utils"
+import Chat from "@/components/Chat"
 
 export default function Home() {
-  const [inputValue, setInputValue] = useState("");
-  const [topic, setTopic] = useState("");
-  const [showResult, setShowResult] = useState(false);
-  const [sources, setSources] = useState<{ name: string; url: string }[]>([]);
-  const [isLoadingSources, setIsLoadingSources] = useState(false);
-  const [messages, setMessages] = useState<{ role: string; content: string }[]>(
-    [],
-  );
-  const [loading, setLoading] = useState(false);
-  const [ageGroup, setAgeGroup] = useState("Middle School");
+  const [inputValue, setInputValue] = useState("")
+  const [topic, setTopic] = useState("")
+  const [showResult, setShowResult] = useState(false)
+  const [sources, setSources] = useState<{ name: string; url: string }[]>([])
+  const [isLoadingSources, setIsLoadingSources] = useState(false)
+  const [messages, setMessages] = useState<{ role: string; content: string }[]>([])
+  const [loading, setLoading] = useState(false)
+  const [ageGroup, setAgeGroup] = useState("Middle School")
 
   const handleInitialChat = async () => {
-    setShowResult(true);
-    setLoading(true);
-    setTopic(inputValue);
-    setInputValue("");
+    setShowResult(true)
+    setLoading(true)
+    setTopic(inputValue)
+    setInputValue("")
 
-    await handleSourcesAndChat(inputValue);
+    await handleSourcesAndChat(inputValue)
 
-    setLoading(false);
-  };
+    setLoading(false)
+  }
 
   const handleChat = async (messages?: { role: string; content: string }[]) => {
-    setLoading(true);
+    setLoading(true)
     const chatRes = await fetch("/api/getChat", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({ messages }),
-    });
+    })
 
     if (!chatRes.ok) {
-      throw new Error(chatRes.statusText);
+      throw new Error(chatRes.statusText)
     }
 
     // This data is a ReadableStream
-    const data = chatRes.body;
+    const data = chatRes.body
     if (!data) {
-      return;
+      return
     }
-    let fullAnswer = "";
+    let fullAnswer = ""
 
     const onParse = (event: ParsedEvent | ReconnectInterval) => {
       if (event.type === "event") {
-        const data = event.data;
+        const data = event.data
         try {
-          const text = JSON.parse(data).text ?? "";
-          fullAnswer += text;
+          const text = JSON.parse(data).text ?? ""
+          fullAnswer += text
           // Update messages with each chunk
           setMessages((prev) => {
-            const lastMessage = prev[prev.length - 1];
+            const lastMessage = prev[prev.length - 1]
             if (lastMessage.role === "assistant") {
-              return [
-                ...prev.slice(0, -1),
-                { ...lastMessage, content: lastMessage.content + text },
-              ];
+              return [...prev.slice(0, -1), { ...lastMessage, content: lastMessage.content + text }]
             } else {
-              return [...prev, { role: "assistant", content: text }];
+              return [...prev, { role: "assistant", content: text }]
             }
-          });
+          })
         } catch (e) {
-          console.error(e);
+          console.error(e)
         }
       }
-    };
+    }
 
     // https://web.dev/streams/#the-getreader-and-read-methods
-    const reader = data.getReader();
-    const decoder = new TextDecoder();
-    const parser = createParser(onParse);
-    let done = false;
+    const reader = data.getReader()
+    const decoder = new TextDecoder()
+    const parser = createParser(onParse)
+    let done = false
 
     while (!done) {
-      const { value, done: doneReading } = await reader.read();
-      done = doneReading;
-      const chunkValue = decoder.decode(value);
-      parser.feed(chunkValue);
+      const { value, done: doneReading } = await reader.read()
+      done = doneReading
+      const chunkValue = decoder.decode(value)
+      parser.feed(chunkValue)
     }
-    setLoading(false);
-  };
+    setLoading(false)
+  }
 
   async function handleSourcesAndChat(question: string) {
-    setIsLoadingSources(true);
-    let sourcesResponse = await fetch("/api/getSources", {
+    setIsLoadingSources(true)
+    const sourcesResponse = await fetch("/api/getSources", {
       method: "POST",
       body: JSON.stringify({ question }),
-    });
-    let sources;
+    })
+    let sources
     if (sourcesResponse.ok) {
-      sources = await sourcesResponse.json();
+      sources = await sourcesResponse.json()
 
-      setSources(sources);
+      setSources(sources)
     } else {
-      setSources([]);
+      setSources([])
     }
-    setIsLoadingSources(false);
+    setIsLoadingSources(false)
 
     const parsedSourcesRes = await fetch("/api/getParsedSources", {
       method: "POST",
       body: JSON.stringify({ sources }),
-    });
-    let parsedSources;
+    })
+    let parsedSources
     if (parsedSourcesRes.ok) {
-      parsedSources = await parsedSourcesRes.json();
+      parsedSources = await parsedSourcesRes.json()
+    } else {
+      parsedSources = []
     }
 
     const initialMessage = [
       { role: "system", content: getSystemPrompt(parsedSources, ageGroup) },
       { role: "user", content: `${question}` },
-    ];
-    setMessages(initialMessage);
-    await handleChat(initialMessage);
+    ]
+    setMessages(initialMessage)
+    await handleChat(initialMessage)
   }
 
   return (
     <>
       <Header />
 
-      <main
-        className={`flex grow flex-col px-4 pb-4 ${showResult ? "overflow-hidden" : ""}`}
-      >
+      <main className={`flex grow flex-col px-6 pb-6 ${showResult ? "overflow-hidden" : ""}`}>
         {showResult ? (
-          <div className="mt-2 flex w-full grow flex-col justify-between overflow-hidden">
-            <div className="flex w-full grow flex-col space-y-2 overflow-hidden">
-              <div className="mx-auto flex w-full max-w-7xl grow flex-col gap-4 overflow-hidden lg:flex-row lg:gap-10">
+          <div className="mt-4 flex w-full grow flex-col justify-between overflow-hidden">
+            <div className="flex w-full grow flex-col space-y-4 overflow-hidden">
+              <div className="mx-auto flex w-full max-w-7xl grow flex-col gap-6 overflow-hidden lg:flex-row">
                 <Chat
                   messages={messages}
                   disabled={loading}
@@ -164,7 +154,7 @@ export default function Home() {
           />
         )}
       </main>
-      {/* <Footer /> */}
+      <Footer />
     </>
-  );
+  )
 }
