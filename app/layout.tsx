@@ -3,8 +3,6 @@ import type { Metadata } from "next"
 import { Inter } from "next/font/google"
 import PlausibleProvider from "next-plausible"
 import "./globals.css"
-import Image from "next/image"
-import bgImage from "../public/new-bg.png"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -51,11 +49,6 @@ export default function RootLayout({
       </head>
 
       <body className={`${inter.className} flex h-full flex-col justify-between text-gray-700 antialiased`}>
-        <Image
-          src={bgImage || "/placeholder.svg"}
-          alt=""
-          className="absolute inset-0 -z-10 max-h-full max-w-full blur-[2px]"
-        />
         {children}
       </body>
     </html>

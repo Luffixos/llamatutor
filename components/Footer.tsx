@@ -3,9 +3,8 @@ import Link from "next/link"
 
 const Footer = () => {
   return (
-    <div className="container flex min-h-[56px] items-center justify-between border-t border-gray-200 px-4 pb-3 pt-5 lg:min-h-[56px] lg:px-0 lg:py-5 lg:pl-5 lg:pr-5">
+    <div className="flex w-full min-h-[56px] items-center justify-between border-t border-gray-200 px-4 pb-3 pt-5 lg:min-h-[56px] lg:px-5 lg:py-5">
       <a href="https://togetherai.link/" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2">
-        
         <span className="text-sm text-gray-600 tracking-tight">
           Made & powered by <span className="font-semibold">Together AI</span>
         </span>
