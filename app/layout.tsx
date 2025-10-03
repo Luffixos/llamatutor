@@ -9,7 +9,7 @@ const inter = Inter({ subsets: ["latin"] })
 const title = "Llama Tutor – AI Personal Tutor"
 const description = "Learn faster with our open source AI personal tutor"
 const url = "https://llamatutor.com/"
-const ogimage = "https://llamatutor.together.ai/og-image.png"
+const ogimage = "https://llamatutor.com/og-llamatutor.png"
 const sitename = "llamatutor.com"
 
 export const metadata: Metadata = {
@@ -17,7 +17,7 @@ export const metadata: Metadata = {
   title,
   description,
   icons: {
-    icon: "/favicon.ico",
+    icon: "/favicon.svg",
   },
   openGraph: {
     images: [ogimage],
